@@ -1,6 +1,7 @@
 const express = require("express");
-const { ObjectId } = require("mongodb");
-const { getDB } = require("../config/db");
+const patientsController = require("../controllers/patients");
+const validatePatient = require("../middleware/validatePatient");
+const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();
 
@@ -16,22 +17,7 @@ const router = express.Router();
  *       200:
  *         description: Success
  */
-router.get("/", async (req, res) => {
-  try {
-    const db = getDB();
-
-    const patients = await db
-      .collection("patients")
-      .find()
-      .toArray();
-
-    res.status(200).json(patients);
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
-  }
-});
+router.get("/", patientsController.getAllPatients);
 
 
 // GET patient by ID
@@ -52,36 +38,7 @@ router.get("/", async (req, res) => {
  *       404:
  *         description: Patient not found
  */
-router.get("/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({
-        message: "Invalid patient ID"
-      });
-    }
-
-    const db = getDB();
-
-    const patient = await db
-      .collection("patients")
-      .findOne({ _id: new ObjectId(id) });
-
-    if (!patient) {
-      return res.status(404).json({
-        message: "Patient not found"
-      });
-    }
-
-    res.status(200).json(patient);
-
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
-  }
-});
+router.get("/:id", patientsController.getPatientById);
 
 
 // POST new patient
@@ -98,49 +55,27 @@ router.get("/:id", async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               firstName:
  *                 type: string
- *                 
- *               age: 
- *                 type: number
- *                 
+ *               lastName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               dob:
+ *                 type: string
  *               gender:
  *                 type: string
- *                 
- *               disease:
+ *               address:
  *                 type: string
- *                 
+ *               emergencyContact:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Patient created successfully
+ *         description: Patient created
  */
-router.post("/", async (req, res) => {
-  try {
-    const { name, age, gender, disease } = req.body;
-
-    if (!name || !age || !gender || !disease) {
-      return res.status(400).json({
-        message: "All fields are required"
-      });
-    }
-
-    const db = getDB();
-
-    const result = await db.collection("patients").insertOne({
-      name,
-      age,
-      gender,
-      disease
-    });
-
-    res.status(201).json(result);
-
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
-  }
-});
+router.post("/", authenticate, validatePatient, patientsController.createPatient);
 
 
 // PUT update patient
@@ -148,45 +83,43 @@ router.post("/", async (req, res) => {
  * @swagger
  * /patients/{id}:
  *   put:
- *     summary: Update a patient
- *     description: Update a patient's information
+ *     summary: Update a patient by ID
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               dob:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               emergencyContact:
+ *                 type: string
  *     responses:
- *       200:
- *         description: Patient updated successfully
+ *       204:
+ *         description: Patient updated
+ *       404:
+ *         description: Patient not found
  */
-router.put("/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({
-        message: "Invalid patient ID"
-      });
-    }
-
-    const db = getDB();
-
-    const result = await db.collection("patients").updateOne(
-      { _id: new ObjectId(id) },
-      {
-        $set: req.body
-      }
-    );
-
-    res.status(200).json(result);
-
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
-  }
-});
+router.put("/:id", authenticate, validatePatient, patientsController.updatePatient);
 
 
 // DELETE patient
@@ -194,7 +127,7 @@ router.put("/:id", async (req, res) => {
  * @swagger
  * /patients/{id}:
  *   delete:
- *     summary: Delete a patient
+ *     summary: Delete a patient by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -202,32 +135,11 @@ router.put("/:id", async (req, res) => {
  *         schema:
  *           type: string
  *     responses:
- *       200:
- *         description: Patient deleted successfully
+ *       204:
+ *         description: Patient deleted
+ *       404:
+ *         description: Patient not found
  */
-router.delete("/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({
-        message: "Invalid patient ID"
-      });
-    }
-
-    const db = getDB();
-
-    const result = await db.collection("patients").deleteOne({
-      _id: new ObjectId(id)
-    });
-
-    res.status(200).json(result);
-
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
-  }
-});
+router.delete("/:id", authenticate, patientsController.deletePatient);
 
 module.exports = router;

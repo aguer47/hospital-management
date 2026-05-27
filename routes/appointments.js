@@ -1,6 +1,6 @@
 const express = require("express");
-const doctorsController = require("../controllers/doctors");
-const validateDoctor = require("../middleware/validatedoctor");
+const appointmentsController = require("../controllers/appointments");
+const validateAppointment = require("../middleware/validateappointment");
 const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();
@@ -8,22 +8,22 @@ const router = express.Router();
 
 /**
  * @swagger
- * /doctors:
+ * /appointments:
  *   get:
- *     summary: Get all doctors
- *     description: Returns all doctors
+ *     summary: Get all appointments
+ *     description: Returns all appointments
  *     responses:
  *       200:
  *         description: Success
  */
-router.get("/", doctorsController.getAllDoctors);
+router.get("/", appointmentsController.getAllAppointments);
 
 
 /**
  * @swagger
- * /doctors/{id}:
+ * /appointments/{id}:
  *   get:
- *     summary: Get doctor by ID
+ *     summary: Get appointment by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -32,18 +32,18 @@ router.get("/", doctorsController.getAllDoctors);
  *           type: string
  *     responses:
  *       200:
- *         description: Doctor found
+ *         description: Appointment found
  *       404:
- *         description: Doctor not found
+ *         description: Appointment not found
  */
-router.get("/:id", doctorsController.getDoctorById);
+router.get("/:id", appointmentsController.getAppointmentById);
 
 
 /**
  * @swagger
- * /doctors:
+ * /appointments:
  *   post:
- *     summary: Create a new doctor
+ *     summary: Create a new appointment
  *     requestBody:
  *       required: true
  *       content:
@@ -51,28 +51,28 @@ router.get("/:id", doctorsController.getDoctorById);
  *           schema:
  *             type: object
  *             properties:
- *               firstName:
+ *               patientId:
  *                 type: string
- *               lastName:
+ *               doctorId:
  *                 type: string
- *               specialization:
+ *               date:
  *                 type: string
- *               phone:
+ *               time:
  *                 type: string
- *               email:
+ *               reason:
  *                 type: string
  *     responses:
  *       201:
- *         description: Doctor created
+ *         description: Appointment created
  */
-router.post("/", authenticate, validateDoctor, doctorsController.createDoctor);
+router.post("/", authenticate, validateAppointment, appointmentsController.createAppointment);
 
 
 /**
  * @swagger
- * /doctors/{id}:
+ * /appointments/{id}:
  *   put:
- *     summary: Update a doctor by ID
+ *     summary: Update an appointment by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -86,30 +86,30 @@ router.post("/", authenticate, validateDoctor, doctorsController.createDoctor);
  *           schema:
  *             type: object
  *             properties:
- *               firstName:
+ *               patientId:
  *                 type: string
- *               lastName:
+ *               doctorId:
  *                 type: string
- *               specialization:
+ *               date:
  *                 type: string
- *               phone:
+ *               time:
  *                 type: string
- *               email:
+ *               reason:
  *                 type: string
  *     responses:
  *       204:
- *         description: Doctor updated
+ *         description: Appointment updated
  *       404:
- *         description: Doctor not found
+ *         description: Appointment not found
  */
-router.put("/:id", authenticate, validateDoctor, doctorsController.updateDoctor);
+router.put("/:id", authenticate, validateAppointment, appointmentsController.updateAppointment);
 
 
 /**
  * @swagger
- * /doctors/{id}:
+ * /appointments/{id}:
  *   delete:
- *     summary: Delete a doctor by ID
+ *     summary: Delete an appointment by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -118,10 +118,10 @@ router.put("/:id", authenticate, validateDoctor, doctorsController.updateDoctor)
  *           type: string
  *     responses:
  *       204:
- *         description: Doctor deleted
+ *         description: Appointment deleted
  *       404:
- *         description: Doctor not found
+ *         description: Appointment not found
  */
-router.delete("/:id", authenticate, doctorsController.deleteDoctor);
+router.delete("/:id", authenticate, appointmentsController.deleteAppointment);
 
 module.exports = router;

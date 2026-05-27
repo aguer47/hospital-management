@@ -1,6 +1,6 @@
 const express = require("express");
-const doctorsController = require("../controllers/doctors");
-const validateDoctor = require("../middleware/validatedoctor");
+const departmentsController = require("../controllers/departments");
+const validateDepartment = require("../middleware/validatedepartment");
 const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();
@@ -8,22 +8,22 @@ const router = express.Router();
 
 /**
  * @swagger
- * /doctors:
+ * /departments:
  *   get:
- *     summary: Get all doctors
- *     description: Returns all doctors
+ *     summary: Get all departments
+ *     description: Returns all departments
  *     responses:
  *       200:
  *         description: Success
  */
-router.get("/", doctorsController.getAllDoctors);
+router.get("/", departmentsController.getAllDepartments);
 
 
 /**
  * @swagger
- * /doctors/{id}:
+ * /departments/{id}:
  *   get:
- *     summary: Get doctor by ID
+ *     summary: Get department by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -32,18 +32,18 @@ router.get("/", doctorsController.getAllDoctors);
  *           type: string
  *     responses:
  *       200:
- *         description: Doctor found
+ *         description: Department found
  *       404:
- *         description: Doctor not found
+ *         description: Department not found
  */
-router.get("/:id", doctorsController.getDoctorById);
+router.get("/:id", departmentsController.getDepartmentById);
 
 
 /**
  * @swagger
- * /doctors:
+ * /departments:
  *   post:
- *     summary: Create a new doctor
+ *     summary: Create a new department
  *     requestBody:
  *       required: true
  *       content:
@@ -51,28 +51,26 @@ router.get("/:id", doctorsController.getDoctorById);
  *           schema:
  *             type: object
  *             properties:
- *               firstName:
+ *               name:
  *                 type: string
- *               lastName:
+ *               location:
  *                 type: string
- *               specialization:
+ *               head:
  *                 type: string
  *               phone:
- *                 type: string
- *               email:
  *                 type: string
  *     responses:
  *       201:
- *         description: Doctor created
+ *         description: Department created
  */
-router.post("/", authenticate, validateDoctor, doctorsController.createDoctor);
+router.post("/", authenticate, validateDepartment, departmentsController.createDepartment);
 
 
 /**
  * @swagger
- * /doctors/{id}:
+ * /departments/{id}:
  *   put:
- *     summary: Update a doctor by ID
+ *     summary: Update a department by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -86,30 +84,28 @@ router.post("/", authenticate, validateDoctor, doctorsController.createDoctor);
  *           schema:
  *             type: object
  *             properties:
- *               firstName:
+ *               name:
  *                 type: string
- *               lastName:
+ *               location:
  *                 type: string
- *               specialization:
+ *               head:
  *                 type: string
  *               phone:
  *                 type: string
- *               email:
- *                 type: string
  *     responses:
  *       204:
- *         description: Doctor updated
+ *         description: Department updated
  *       404:
- *         description: Doctor not found
+ *         description: Department not found
  */
-router.put("/:id", authenticate, validateDoctor, doctorsController.updateDoctor);
+router.put("/:id", authenticate, validateDepartment, departmentsController.updateDepartment);
 
 
 /**
  * @swagger
- * /doctors/{id}:
+ * /departments/{id}:
  *   delete:
- *     summary: Delete a doctor by ID
+ *     summary: Delete a department by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -118,10 +114,10 @@ router.put("/:id", authenticate, validateDoctor, doctorsController.updateDoctor)
  *           type: string
  *     responses:
  *       204:
- *         description: Doctor deleted
+ *         description: Department deleted
  *       404:
- *         description: Doctor not found
+ *         description: Department not found
  */
-router.delete("/:id", authenticate, doctorsController.deleteDoctor);
+router.delete("/:id", authenticate, departmentsController.deleteDepartment);
 
 module.exports = router;

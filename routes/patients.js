@@ -1,6 +1,6 @@
 const express = require("express");
 const patientsController = require("../controllers/patients");
-const validatePatient = require("../middleware/validatePatient");
+const validatePatient = require("../middleware/validatepatient");
 const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();

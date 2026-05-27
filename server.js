@@ -25,8 +25,16 @@ app.use(express.json());
 app.use(session({
   secret: process.env.SESSION_SECRET || "secret",
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: {
+    secure: process.env.NODE_ENV === "production" // Use secure cookies in production
+  }
 }));
+
+// If deployed on a proxy like Render
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
 // Passport initialization
 app.use(passport.initialize());
